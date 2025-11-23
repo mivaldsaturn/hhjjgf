@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSO Generator</title>
+    <style>
+        :root {
+            --primary: #4a6cf7;
+            --primary-dark: #3a5ce5;
+            --secondary: #6c757d;
+            --success: #28a745;
+            --danger: #dc3545;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --border: #dee2e6;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fb;
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .section-title {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+        
+        .upload-area {
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background-color: var(--light);
+        }
+        
+        .upload-area:hover {
+            border-color: var(--primary);
+            background-color: rgba(74, 108, 247, 0.05);
+        }
+        
+        .upload-area.active {
+            border-color: var(--primary);
+            background-color: rgba(74, 108, 247, 0.1);
+        }
+        
+        .upload-icon {
+            font-size: 48px;
+            color: var(--secondary);
+            margin-bottom: 15px;
+        }
+        
+        .upload-text {
+            margin-bottom: 15px;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+        
+        .btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background-color: var(--secondary);
+        }
+        
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+        
+        .btn-success {
+            background-color: var(--success);
+        }
+        
+        .btn-success:hover {
+            background-color: #218838;
+        }
+        
+        .input-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+        
+        input[type="text"]:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+        
+        .preview-area {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            background-color: var(--light);
+            min-height: 200px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .result-area {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .result-title {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: var(--success);
+        }
+        
+        .result-link {
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid var(--border);
+            word-break: break-all;
+            margin-bottom: 15px;
+        }
+        
+        .alert {
+            padding: 12px 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            display: none;
+        }
+        
+        .alert-success {
+            background-color: rgba(40, 167, 69, 0.1);
+            border: 1px solid rgba(40, 167, 69, 0.3);
+            color: var(--success);
+        }
+        
+        .alert-danger {
+            background-color: rgba(220, 53, 69, 0.1);
+            border: 1px solid rgba(220, 53, 69, 0.3);
+            color: var(--danger);
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--secondary);
+            font-size: 0.9rem;
+            border-top: 1px solid var(--border);
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                border-radius: 0;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .actions {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>JSO Generator</h1>
+            <p class="subtitle">Unggah file HTML dan buat link JSO dengan mudah</p>
+        </header>
+        
+        <div class="content">
+            <div class="section">
+                <h2 class="section-title">1. Unggah File HTML</h2>
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">📁</div>
+                    <p class="upload-text">Klik untuk memilih file HTML atau tarik file ke sini</p>
+                    <input type="file" id="fileInput" accept=".html,.htm" class="hidden">
+                    <button class="btn" id="selectFileBtn">Pilih File</button>
+                </div>
+                <div class="alert alert-danger" id="errorAlert"></div>
+            </div>
+            
+            <div class="section">
+                <h2 class="section-title">2. Tentukan Nama JSO</h2>
+                <div class="input-group">
+                    <label for="jsoName">Nama JSO (akan menjadi bagian dari URL)</label>
+                    <input type="text" id="jsoName" placeholder="misalnya: my-overlay">
+                    <small>URL akan menjadi: https://jso.defacebyyechen.id/raw/[nama-jso]</small>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2 class="section-title">3. Preview HTML</h2>
+                <div class="preview-area" id="previewArea">
+                    <p style="text-align: center; color: var(--secondary);">Preview akan muncul di sini setelah Anda mengunggah file HTML</p>
+                </div>
+            </div>
+            
+            <div class="actions">
+                <button class="btn btn-secondary" id="resetBtn">Reset</button>
+                <button class="btn btn-success" id="generateBtn">Generate JSO Link</button>
+            </div>
+            
+            <div class="result-area" id="resultArea">
+                <h3 class="result-title">JSO Link Berhasil Dibuat!</h3>
+                <div class="result-link" id="resultLink"></div>
+                <button class="btn" id="copyBtn">Salin Link</button>
+                <a href="#" class="btn btn-secondary" id="testLink" target="_blank">Test Link</a>
+            </div>
+            
+            <div class="alert alert-success" id="successAlert">Link berhasil disalin ke clipboard!</div>
+        </div>
+        
+        <footer>
+            <p>JSO Generator &copy; 2023 - Dibuat untuk memudahkan pembuatan JavaScript Overlay</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const uploadArea = document.getElementById('uploadArea');
+            const fileInput = document.getElementById('fileInput');
+            const selectFileBtn = document.getElementById('selectFileBtn');
+            const previewArea = document.getElementById('previewArea');
+            const jsoNameInput = document.getElementById('jsoName');
+            const generateBtn = document.getElementById('generateBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const resultArea = document.getElementById('resultArea');
+            const resultLink = document.getElementById('resultLink');
+            const copyBtn = document.getElementById('copyBtn');
+            const testLink = document.getElementById('testLink');
+            const errorAlert = document.getElementById('errorAlert');
+            const successAlert = document.getElementById('successAlert');
+            
+            let uploadedFileContent = '';
+            
+            // Event listeners untuk upload area
+            selectFileBtn.addEventListener('click', function() {
+                fileInput.click();
+            });
+            
+            uploadArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                uploadArea.classList.add('active');
+            });
+            
+            uploadArea.addEventListener('dragleave', function() {
+                uploadArea.classList.remove('active');
+            });
+            
+            uploadArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                uploadArea.classList.remove('active');
+                
+                if (e.dataTransfer.files.length) {
+                    handleFile(e.dataTransfer.files[0]);
+                }
+            });
+            
+            fileInput.addEventListener('change', function() {
+                if (this.files.length) {
+                    handleFile(this.files[0]);
+                }
+            });
+            
+            // Fungsi untuk menangani file yang diunggah
+            function handleFile(file) {
+                if (file.type !== 'text/html' && !file.name.endsWith('.html') && !file.name.endsWith('.htm')) {
+                    showError('Silakan unggah file HTML yang valid.');
+                    return;
+                }
+                
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    uploadedFileContent = e.target.result;
+                    previewArea.innerHTML = uploadedFileContent;
+                    hideError();
+                };
+                
+                reader.onerror = function() {
+                    showError('Gagal membaca file. Silakan coba lagi.');
+                };
+                
+                reader.readAsText(file);
+            }
+            
+            // Event listener untuk generate button
+            generateBtn.addEventListener('click', function() {
+                if (!uploadedFileContent) {
+                    showError('Silakan unggah file HTML terlebih dahulu.');
+                    return;
+                }
+                
+                const jsoName = jsoNameInput.value.trim();
+                if (!jsoName) {
+                    showError('Silakan masukkan nama untuk JSO.');
+                    return;
+                }
+                
+                // Simulasi pembuatan JSO link
+                // Dalam implementasi nyata, ini akan mengirim file ke server
+                const jsoUrl = `https://jso.defacebyyechen.id/raw/${jsoName}`;
+                
+                resultLink.textContent = jsoUrl;
+                testLink.href = jsoUrl;
+                resultArea.style.display = 'block';
+                
+                // Scroll ke hasil
+                resultArea.scrollIntoView({ behavior: 'smooth' });
+            });
+            
+            // Event listener untuk reset button
+            resetBtn.addEventListener('click', function() {
+                fileInput.value = '';
+                uploadedFileContent = '';
+                jsoNameInput.value = '';
+                previewArea.innerHTML = '<p style="text-align: center; color: var(--secondary);">Preview akan muncul di sini setelah Anda mengunggah file HTML</p>';
+                resultArea.style.display = 'none';
+                hideError();
+                hideSuccess();
+            });
+            
+            // Event listener untuk copy button
+            copyBtn.addEventListener('click', function() {
+                navigator.clipboard.writeText(resultLink.textContent)
+                    .then(() => {
+                        showSuccess('Link berhasil disalin ke clipboard!');
+                    })
+                    .catch(err => {
+                        console.error('Gagal menyalin: ', err);
+                    });
+            });
+            
+            // Fungsi untuk menampilkan pesan error
+            function showError(message) {
+                errorAlert.textContent = message;
+                errorAlert.style.display = 'block';
+                hideSuccess();
+            }
+            
+            // Fungsi untuk menyembunyikan pesan error
+            function hideError() {
+                errorAlert.style.display = 'none';
+            }
+            
+            // Fungsi untuk menampilkan pesan sukses
+            function showSuccess(message) {
+                successAlert.textContent = message;
+                successAlert.style.display = 'block';
+                setTimeout(hideSuccess, 3000);
+            }
+            
+            // Fungsi untuk menyembunyikan pesan sukses
+            function hideSuccess() {
+                successAlert.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
